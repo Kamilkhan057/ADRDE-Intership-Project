@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VenueBooking | VB</title>
+    <style>
+      /* Add these styles for the favicon replacement with logo */
+      .favicon-logo {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        background: linear-gradient(to right, #3b82f6, #6366f1);
+        color: white;
+        border-radius: 6px;
+        text-align: center;
+        line-height: 24px;
+        font-weight: bold;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+      .title-container {
+        display: flex;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Optional: Add this script to dynamically update the title with logo -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const favicon = document.querySelector('link[rel="icon"]');
+        if (favicon) {
+          // Create a canvas element to generate dynamic favicon
+          const canvas = document.createElement('canvas');
+          canvas.width = 32;
+          canvas.height = 32;
+          const ctx = canvas.getContext('2d');
+          
+          // Draw gradient background
+          const gradient = ctx.createLinearGradient(0, 0, 32, 32);
+          gradient.addColorStop(0, '#3b82f6');
+          gradient.addColorStop(1, '#6366f1');
+          ctx.fillStyle = gradient;
+          ctx.fillRect(0, 0, 32, 32);
+          
+          // Draw "VB" text
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 16px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('VB', 16, 16);
+          
+          // Set the favicon
+          favicon.href = canvas.toDataURL('image/png');
+        }
+        
+        // Update tab title with logo simulation
+        const originalTitle = document.title;
+        const titleContainer = document.createElement('div');
+        titleContainer.className = 'title-container';
+        titleContainer.innerHTML = `
+          <span class="favicon-logo">VB</span>
+          <span>${originalTitle}</span>
+        `;
+        
+        // This won't actually change the tab title appearance but is here for reference
+        // In a real app, you would customize the browser tab appearance through the manifest
+      });
+    </script>
+  </body>
+</html>
