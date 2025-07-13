@@ -28,7 +28,6 @@ const ConfirmationModal = ({ onClose, onConfirm, message, title }) => {
   );
 };
 
-
 const UserReviewSection = () => {
   // Sample feedback data
   const [feedback, setFeedback] = useState([
@@ -176,14 +175,15 @@ const UserReviewSection = () => {
   const [filterRole, setFilterRole] = useState('All');
   const [filterCategory, setFilterCategory] = useState('All');
   const [filterRating, setFilterRating] = useState('All');
-  const [filterResolution, setFilterResolution] = useState('All'); // New filter for resolution status
+  const [filterResolution, setFilterResolution] = useState('All');
   const [sortBy, setSortBy] = useState('dateDesc');
   const [activeReply, setActiveReply] = useState(null);
   const [replyMessage, setReplyMessage] = useState('');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
   const [feedbackToDelete, setFeedbackToDelete] = useState(null);
-  const [selectedFeedbackIds, setSelectedFeedbackIds] = useState([]); // State for selected feedback
+  const [selectedFeedbackIds, setSelectedFeedbackIds] = useState([]);
+  const [showFilters, setShowFilters] = useState(false); // State for mobile filters toggle
 
   // Filter and Sort feedback using useMemo for performance
   const filteredAndSortedFeedback = useMemo(() => {
@@ -217,14 +217,11 @@ const UserReviewSection = () => {
 
   // Handle reply submission
   const handleReplySubmit = (feedbackId) => {
-    if (!replyMessage.trim()) {
-      // Optionally show a message that reply cannot be empty
-      return;
-    }
+    if (!replyMessage.trim()) return;
 
     const newResponse = {
-      id: Date.now(), // Unique ID for the response
-      from: 'Admin User', // Assuming admin is replying
+      id: Date.now(),
+      from: 'Admin User',
       date: new Date().toLocaleString('en-US', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
       message: replyMessage
     };
@@ -243,7 +240,7 @@ const UserReviewSection = () => {
   const handleMarkResolved = (feedbackId) => {
     setFeedback(prevFeedback => prevFeedback.map(item =>
       item.id === feedbackId
-        ? { ...item, resolved: !item.resolved } // Toggle resolved status
+        ? { ...item, resolved: !item.resolved }
         : item
     ));
   };
@@ -252,8 +249,8 @@ const UserReviewSection = () => {
     setFeedbackToDelete(idToDelete);
     setConfirmAction(() => () => {
       setFeedback(prevFeedback => prevFeedback.filter(item => item.id !== idToDelete));
-      setFeedbackToDelete(null); // Clear item to delete after deletion
-      setSelectedFeedbackIds(prev => prev.filter(id => id !== idToDelete)); // Deselect if deleted
+      setFeedbackToDelete(null);
+      setSelectedFeedbackIds(prev => prev.filter(id => id !== idToDelete));
     });
     setShowConfirmModal(true);
   };
@@ -331,7 +328,7 @@ const UserReviewSection = () => {
       Date: item.date,
       Category: item.category,
       Rating: item.rating,
-      Message: item.message.replace(/"/g, '""'), // Escape double quotes for CSV
+      Message: item.message.replace(/"/g, '""'),
       Responses: item.responses.map(res => `${res.from} (${res.date}): ${res.message.replace(/"/g, '""')}`).join('; '),
       Resolved: item.resolved ? 'Yes' : 'No'
     }));
@@ -350,219 +347,257 @@ const UserReviewSection = () => {
     alert("Feedback data exported successfully as CSV!");
   };
 
-
   return (
-    <div className="p-4 sm:p-6 bg-white rounded-2xl shadow-lg min-h-[60vh] flex flex-col">
-      <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-6 text-center bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
+    <div className="p-2 sm:p-4 md:p-6 bg-white rounded-lg sm:rounded-2xl shadow-lg min-h-[60vh] flex flex-col">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-4 sm:mb-6 text-center bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
         User Feedback & Reviews
       </h1>
 
       {/* Analytics Section */}
-      <div className="bg-blue-50 p-4 rounded-xl shadow-inner mb-6 flex flex-wrap justify-around items-center gap-4 text-center">
-        <div className="flex flex-col items-center">
-          <FaChartPie className="text-blue-600 text-3xl mb-2" />
-          <span className="text-gray-700 text-sm">Total Feedback</span>
-          <span className="text-xl font-bold text-gray-900">{totalFeedback}</span>
+      <div className="bg-blue-50 p-2 sm:p-4 rounded-lg sm:rounded-xl shadow-inner mb-4 sm:mb-6 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 text-center">
+        <div className="flex flex-col items-center p-2">
+          <FaChartPie className="text-blue-600 text-xl sm:text-2xl md:text-3xl mb-1 sm:mb-2" />
+          <span className="text-xs sm:text-sm text-gray-700">Total</span>
+          <span className="text-sm sm:text-lg md:text-xl font-bold text-gray-900">{totalFeedback}</span>
         </div>
-        <div className="flex flex-col items-center">
-          <FaCheckCircle className="text-green-600 text-3xl mb-2" />
-          <span className="text-gray-700 text-sm">Resolved</span>
-          <span className="text-xl font-bold text-gray-900">{resolvedCount}</span>
+        <div className="flex flex-col items-center p-2">
+          <FaCheckCircle className="text-green-600 text-xl sm:text-2xl md:text-3xl mb-1 sm:mb-2" />
+          <span className="text-xs sm:text-sm text-gray-700">Resolved</span>
+          <span className="text-sm sm:text-lg md:text-xl font-bold text-gray-900">{resolvedCount}</span>
         </div>
-        <div className="flex flex-col items-center">
-          <FaTimesCircle className="text-red-600 text-3xl mb-2" />
-          <span className="text-gray-700 text-sm">Unresolved</span>
-          <span className="text-xl font-bold text-gray-900">{unresolvedCount}</span>
+        <div className="flex flex-col items-center p-2">
+          <FaTimesCircle className="text-red-600 text-xl sm:text-2xl md:text-3xl mb-1 sm:mb-2" />
+          <span className="text-xs sm:text-sm text-gray-700">Unresolved</span>
+          <span className="text-sm sm:text-lg md:text-xl font-bold text-gray-900">{unresolvedCount}</span>
         </div>
-        <div className="flex flex-col items-center">
-          <FaStar className="text-yellow-500 text-3xl mb-2" />
-          <span className="text-gray-700 text-sm">Avg. Rating</span>
-          <span className="text-xl font-bold text-gray-900">{averageRating}</span>
+        <div className="flex flex-col items-center p-2">
+          <FaStar className="text-yellow-500 text-xl sm:text-2xl md:text-3xl mb-1 sm:mb-2" />
+          <span className="text-xs sm:text-sm text-gray-700">Avg. Rating</span>
+          <span className="text-sm sm:text-lg md:text-xl font-bold text-gray-900">{averageRating}</span>
         </div>
       </div>
 
       {/* Search and Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6 p-4 bg-gray-50 rounded-xl shadow-inner items-center">
-        <div className="relative flex-1 min-w-[200px] w-full md:w-auto">
+      <div className="flex flex-col gap-2 sm:gap-4 mb-4 sm:mb-6 p-2 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl shadow-inner">
+        {/* Search Bar */}
+        <div className="relative w-full">
           <input
             type="text"
-            placeholder="Search by name, message, or category..."
+            placeholder="Search feedback..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 outline-none text-sm sm:text-base"
+            className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-150 outline-none text-xs sm:text-sm md:text-base"
           />
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-base sm:text-lg" />
+          <FaSearch className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm sm:text-base" />
         </div>
 
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <FaUser className="text-gray-500 text-base sm:text-lg" />
-          <select
-            value={filterRole}
-            onChange={(e) => setFilterRole(e.target.value)}
-            className="flex-1 px-4 sm:px-5 py-2 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base cursor-pointer bg-white transition duration-150 outline-none appearance-none bg-no-repeat bg-[right_0.75rem_center] bg-[length:16px] bg-[url('data:image/svg+xml,%3Csvg_xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27_viewBox%3D%270_0_24_24%27_fill%3D%27none%27_stroke%3D%27%2364748b%27_stroke-width%3D%272%27_stroke-linecap%3D%27round%27_stroke-linejoin%3D%27round%27%3E%3Cpolyline_points%3D%276_9_12_15_18_9%27%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')]"
-          >
-            <option value="All">All Roles</option>
-            <option value="User">User</option>
-            <option value="Director Secretary">Director Secretary</option>
-            <option value="Group Director">Group Director</option>
-          </select>
-        </div>
+        {/* Mobile Filter Toggle */}
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className="sm:hidden flex items-center justify-center gap-2 px-3 py-2 bg-blue-100 text-blue-700 rounded-md text-xs font-medium"
+        >
+          <FaFilter /> {showFilters ? 'Hide Filters' : 'Show Filters'}
+        </button>
 
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <FaTag className="text-gray-500 text-base sm:text-lg" />
-          <select
-            value={filterCategory}
-            onChange={(e) => setFilterCategory(e.target.value)}
-            className="flex-1 px-4 sm:px-5 py-2 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base cursor-pointer bg-white transition duration-150 outline-none appearance-none bg-no-repeat bg-[right_0.75rem_center] bg-[length:16px] bg-[url('data:image/svg+xml,%3Csvg_xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27_viewBox%3D%270_0_24_24%27_fill%3D%27none%27_stroke%3D%27%2364748b%27_stroke-width%3D%272%27_stroke-linecap%3D%27round%27_stroke-linejoin%3D%27round%27%3E%3Cpolyline_points%3D%276_9_12_15_18_9%27%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')]"
-          >
-            <option value="All">All Categories</option>
-            <option value="Venue Experience">Venue Experience</option>
-            <option value="Booking Process">Booking Process</option>
-            <option value="Facility Management">Facility Management</option>
-            <option value="Catering Service">Catering Service</option>
-            <option value="Technical Support">Technical Support</option>
-            <option value="Policy Concern">Policy Concern</option>
-          </select>
-        </div>
+        {/* Filters - Hidden on mobile unless toggled */}
+        <div className={`${showFilters ? 'block' : 'hidden'} sm:block`}>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
+            {/* Role Filter */}
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-500 mb-1">Role</label>
+              <div className="relative">
+                <select
+                  value={filterRole}
+                  onChange={(e) => setFilterRole(e.target.value)}
+                  className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 rounded-md text-xs sm:text-sm cursor-pointer bg-white appearance-none"
+                >
+                  <option value="All">All Roles</option>
+                  <option value="User">User</option>
+                  <option value="Director Secretary">Director Secretary</option>
+                  <option value="Group Director">Group Director</option>
+                </select>
+                <FaUser className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
+              </div>
+            </div>
 
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <FaStar className="text-gray-500 text-base sm:text-lg" />
-          <select
-            value={filterRating}
-            onChange={(e) => setFilterRating(e.target.value)}
-            className="flex-1 px-4 sm:px-5 py-2 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base cursor-pointer bg-white transition duration-150 outline-none appearance-none bg-no-repeat bg-[right_0.75rem_center] bg-[length:16px] bg-[url('data:image/svg+xml,%3Csvg_xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27_viewBox%3D%270_0_24_24%27_fill%3D%27none%27_stroke%3D%27%2364748b%27_stroke-width%3D%272%27_stroke-linecap%3D%27round%27_stroke-linejoin%3D%27round%27%3E%3Cpolyline_points%3D%276_9_12_15_18_9%27%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')]"
-          >
-            <option value="All">All Ratings</option>
-            <option value="5">5 Stars</option>
-            <option value="4">4 Stars</option>
-            <option value="3">3 Stars</option>
-            <option value="2">2 Stars</option>
-            <option value="1">1 Star</option>
-          </select>
-        </div>
+            {/* Category Filter */}
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-500 mb-1">Category</label>
+              <div className="relative">
+                <select
+                  value={filterCategory}
+                  onChange={(e) => setFilterCategory(e.target.value)}
+                  className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 rounded-md text-xs sm:text-sm cursor-pointer bg-white appearance-none"
+                >
+                  <option value="All">All Categories</option>
+                  <option value="Venue Experience">Venue Experience</option>
+                  <option value="Booking Process">Booking Process</option>
+                  <option value="Facility Management">Facility Management</option>
+                  <option value="Catering Service">Catering Service</option>
+                  <option value="Technical Support">Technical Support</option>
+                  <option value="Policy Concern">Policy Concern</option>
+                </select>
+                <FaTag className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
+              </div>
+            </div>
 
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <FaCheckCircle className="text-gray-500 text-base sm:text-lg" />
-          <select
-            value={filterResolution}
-            onChange={(e) => setFilterResolution(e.target.value)}
-            className="flex-1 px-4 sm:px-5 py-2 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base cursor-pointer bg-white transition duration-150 outline-none appearance-none bg-no-repeat bg-[right_0.75rem_center] bg-[length:16px] bg-[url('data:image/svg+xml,%3Csvg_xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27_viewBox%3D%270_0_24_24%27_fill%3D%27none%27_stroke%3D%27%2364748b%27_stroke-width%3D%272%27_stroke-linecap%3D%27round%27_stroke-linejoin%3D%27round%27%3E%3Cpolyline_points%3D%276_9_12_15_18_9%27%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')]"
-          >
-            <option value="All">All Statuses</option>
-            <option value="Resolved">Resolved</option>
-            <option value="Unresolved">Unresolved</option>
-          </select>
-        </div>
+            {/* Rating Filter */}
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-500 mb-1">Rating</label>
+              <div className="relative">
+                <select
+                  value={filterRating}
+                  onChange={(e) => setFilterRating(e.target.value)}
+                  className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 rounded-md text-xs sm:text-sm cursor-pointer bg-white appearance-none"
+                >
+                  <option value="All">All Ratings</option>
+                  <option value="5">5 Stars</option>
+                  <option value="4">4 Stars</option>
+                  <option value="3">3 Stars</option>
+                  <option value="2">2 Stars</option>
+                  <option value="1">1 Star</option>
+                </select>
+                <FaStar className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
+              </div>
+            </div>
 
-        <div className="flex items-center gap-2 w-full md:w-auto">
-          <FaSortAmountDown className="text-gray-500 text-base sm:text-lg" />
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="flex-1 px-4 sm:px-5 py-2 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base cursor-pointer bg-white transition duration-150 outline-none appearance-none bg-no-repeat bg-[right_0.75rem_center] bg-[length:16px] bg-[url('data:image/svg+xml,%3Csvg_xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27_viewBox%3D%270_0_24_24%27_fill%3D%27none%27_stroke%3D%27%2364748b%27_stroke-width%3D%272%27_stroke-linecap%3D%27round%27_stroke-linejoin%3D%27round%27%3E%3Cpolyline_points%3D%276_9_12_15_18_9%27%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')]"
-          >
-            <option value="dateDesc">Date (Newest First)</option>
-            <option value="dateAsc">Date (Oldest First)</option>
-            <option value="ratingDesc">Rating (High to Low)</option>
-            <option value="ratingAsc">Rating (Low to High)</option>
-          </select>
+            {/* Resolution Filter */}
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-500 mb-1">Status</label>
+              <div className="relative">
+                <select
+                  value={filterResolution}
+                  onChange={(e) => setFilterResolution(e.target.value)}
+                  className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 rounded-md text-xs sm:text-sm cursor-pointer bg-white appearance-none"
+                >
+                  <option value="All">All Statuses</option>
+                  <option value="Resolved">Resolved</option>
+                  <option value="Unresolved">Unresolved</option>
+                </select>
+                <FaCheckCircle className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Sort By */}
+            <div className="flex flex-col">
+              <label className="text-xs text-gray-500 mb-1">Sort By</label>
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full px-2 py-1 sm:px-3 sm:py-2 border border-gray-300 rounded-md text-xs sm:text-sm cursor-pointer bg-white appearance-none"
+                >
+                  <option value="dateDesc">Newest First</option>
+                  <option value="dateAsc">Oldest First</option>
+                  <option value="ratingDesc">High Rating</option>
+                  <option value="ratingAsc">Low Rating</option>
+                </select>
+                <FaSortAmountDown className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Export Button */}
+            <div className="flex items-end">
+              <button
+                onClick={handleExportData}
+                className="w-full px-2 py-1 sm:px-3 sm:py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-xs sm:text-sm flex items-center justify-center gap-1"
+              >
+                <FaFileExport className="text-xs sm:text-sm" /> Export
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Batch Actions */}
       {filteredAndSortedFeedback.length > 0 && (
-        <div className="flex flex-wrap gap-3 mb-6 p-4 bg-gray-50 rounded-xl shadow-inner items-center justify-between">
-          <label className="inline-flex items-center cursor-pointer text-gray-700 text-sm sm:text-base">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-4 sm:mb-6 p-2 sm:p-3 bg-gray-50 rounded-lg sm:rounded-xl shadow-inner">
+          <label className="inline-flex items-center cursor-pointer text-gray-700 text-xs sm:text-sm">
             <input
               type="checkbox"
-              className="form-checkbox h-5 w-5 text-blue-600 rounded-md"
+              className="form-checkbox h-4 w-4 sm:h-5 sm:w-5 text-blue-600 rounded"
               onChange={handleSelectAll}
               checked={selectedFeedbackIds.length === filteredAndSortedFeedback.length && filteredAndSortedFeedback.length > 0}
             />
             <span className="ml-2">Select All ({selectedFeedbackIds.length})</span>
           </label>
-          <div className="flex flex-wrap gap-2">
+          
+          <div className="flex flex-wrap gap-1 sm:gap-2">
             <button
               onClick={handleBatchMarkResolved}
               disabled={selectedFeedbackIds.length === 0}
-              className="px-4 py-2 rounded-lg font-semibold cursor-pointer flex items-center gap-2 transition-all duration-300 outline-none shadow-sm bg-green-500 text-white hover:bg-green-600 hover:shadow-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-2 py-1 sm:px-3 sm:py-2 rounded-md font-medium cursor-pointer flex items-center gap-1 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed bg-green-500 hover:bg-green-600 text-white"
             >
-              <FaCheckCircle /> Mark Selected Resolved
+              <FaCheckCircle className="text-xs sm:text-sm" /> Resolve
             </button>
             <button
               onClick={handleBatchMarkUnresolved}
               disabled={selectedFeedbackIds.length === 0}
-              className="px-4 py-2 rounded-lg font-semibold cursor-pointer flex items-center gap-2 transition-all duration-300 outline-none shadow-sm bg-orange-500 text-white hover:bg-orange-600 hover:shadow-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-2 py-1 sm:px-3 sm:py-2 rounded-md font-medium cursor-pointer flex items-center gap-1 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed bg-orange-500 hover:bg-orange-600 text-white"
             >
-              <FaTimesCircle /> Mark Selected Unresolved
+              <FaTimesCircle className="text-xs sm:text-sm" /> Unresolve
             </button>
             <button
               onClick={handleBatchDelete}
               disabled={selectedFeedbackIds.length === 0}
-              className="px-4 py-2 rounded-lg font-semibold cursor-pointer flex items-center gap-2 transition-all duration-300 outline-none shadow-sm bg-red-500 text-white hover:bg-red-600 hover:shadow-md text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-2 py-1 sm:px-3 sm:py-2 rounded-md font-medium cursor-pointer flex items-center gap-1 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed bg-red-500 hover:bg-red-600 text-white"
             >
-              <FaTrashAlt /> Delete Selected
-            </button>
-            <button
-              onClick={handleExportData}
-              className="px-4 py-2 rounded-lg font-semibold cursor-pointer flex items-center gap-2 transition-all duration-300 outline-none shadow-sm bg-purple-600 text-white hover:bg-purple-700 hover:shadow-md text-sm"
-            >
-              <FaFileExport /> Export Data
+              <FaTrashAlt className="text-xs sm:text-sm" /> Delete
             </button>
           </div>
         </div>
       )}
 
-
       {/* Feedback Items Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {filteredAndSortedFeedback.length > 0 ? (
           filteredAndSortedFeedback.map((item) => (
-            <div key={item.id} className={`border border-gray-200 rounded-xl p-4 sm:p-6 bg-white shadow-md relative transition-all duration-300 hover:scale-[1.02] hover:shadow-lg flex flex-col justify-between ${item.resolved ? 'border-l-4 border-green-500' : ''}`}>
-              <div className="absolute top-3 left-3">
+            <div key={item.id} className={`border border-gray-200 rounded-lg sm:rounded-xl p-3 sm:p-4 bg-white shadow-sm hover:shadow-md transition-all duration-300 ${item.resolved ? 'border-l-4 border-green-500' : ''}`}>
+              <div className="absolute top-2 left-2">
                 <input
                   type="checkbox"
-                  className="form-checkbox h-5 w-5 text-blue-600 rounded-md"
+                  className="form-checkbox h-4 w-4 sm:h-5 sm:w-5 text-blue-600 rounded"
                   checked={selectedFeedbackIds.includes(item.id)}
                   onChange={() => handleCheckboxChange(item.id)}
                 />
               </div>
-              <div className="pl-8"> {/* Added padding to make space for checkbox */}
-                <div className="flex justify-between items-start mb-2">
+              
+              <div className="pl-6 sm:pl-8">
+                <div className="flex justify-between items-start mb-1 sm:mb-2">
                   <div className="user-info">
-                    <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1">{item.from}</h3>
-                    <p className="text-xs sm:text-sm text-gray-600">
+                    <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-800 line-clamp-1">{item.from}</h3>
+                    <p className="text-xs text-gray-600">
                       <span className="font-semibold text-blue-600">{item.role}</span> • {item.date}
                     </p>
                   </div>
-                  <div className="rating-display flex items-center gap-1">
+                  <div className="rating-display flex items-center gap-0.5">
                     {[...Array(5)].map((_, i) => (
                       <FaStar
                         key={i}
-                        className={`text-base ${i < item.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                        className={`text-xs sm:text-sm ${i < item.rating ? 'text-yellow-400' : 'text-gray-300'}`}
                       />
                     ))}
                   </div>
                 </div>
 
-                <p className="text-sm sm:text-base text-gray-700 mb-3 flex items-center">
-                  <FaTag className="mr-2 text-gray-500" />
+                <p className="text-xs sm:text-sm text-gray-700 mb-2 flex items-center">
+                  <FaTag className="mr-1 text-gray-500 text-xs" />
                   <span className="font-medium">{item.category}</span>
                 </p>
 
-                <div className="bg-gray-100 p-3 rounded-md text-sm text-gray-800 mb-3">
-                  <p>{item.message}</p>
+                <div className="bg-gray-100 p-2 rounded text-xs sm:text-sm text-gray-800 mb-2 sm:mb-3">
+                  <p className="line-clamp-3">{item.message}</p>
                 </div>
 
                 {/* Responses */}
                 {item.responses.length > 0 && (
-                  <div className="responses-section mt-4 pt-3 border-t border-gray-200">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Replies:</h4>
+                  <div className="responses-section mt-2 pt-2 border-t border-gray-200">
+                    <h4 className="text-xs font-semibold text-gray-700 mb-1">Replies:</h4>
                     {item.responses.map(response => (
-                      <div key={response.id} className="bg-blue-50 p-3 rounded-lg mb-2 text-xs border border-blue-100">
-                        <div className="flex justify-between items-center mb-1">
+                      <div key={response.id} className="bg-blue-50 p-2 rounded mb-1 text-xs border border-blue-100">
+                        <div className="flex justify-between items-center mb-0.5">
                           <strong className="text-blue-700">{response.from}</strong>
-                          <span className="text-gray-500">{response.date}</span>
+                          <span className="text-gray-500 text-xxs">{response.date}</span>
                         </div>
                         <p className="text-gray-700">{response.message}</p>
                       </div>
@@ -572,27 +607,27 @@ const UserReviewSection = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="action-buttons mt-4 flex flex-col sm:flex-row justify-end gap-2">
+              <div className="action-buttons mt-3 flex flex-wrap justify-end gap-1 sm:gap-2">
                 {activeReply === item.id ? (
                   <div className="w-full">
                     <textarea
                       value={replyMessage}
                       onChange={(e) => setReplyMessage(e.target.value)}
                       placeholder="Type your response..."
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm mb-2 resize-y min-h-[80px]"
+                      className="w-full p-1 sm:p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-xs sm:text-sm mb-1 resize-y min-h-[60px] sm:min-h-[80px]"
                     />
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end gap-1">
                       <button
                         onClick={() => { setActiveReply(null); setReplyMessage(''); }}
-                        className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition text-sm"
+                        className="px-2 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-xs sm:text-sm"
                       >
                         Cancel
                       </button>
                       <button
                         onClick={() => handleReplySubmit(item.id)}
-                        className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-sm flex items-center gap-1"
+                        className="px-2 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-xs sm:text-sm flex items-center gap-1"
                       >
-                        <FaReply /> Send
+                        <FaReply className="text-xs" /> Send
                       </button>
                     </div>
                   </div>
@@ -600,25 +635,22 @@ const UserReviewSection = () => {
                   <>
                     <button
                       onClick={() => setActiveReply(item.id)}
-                      className="px-4 py-2 rounded-lg font-semibold cursor-pointer flex items-center gap-2 transition-all duration-300 outline-none shadow-sm bg-blue-500 text-white hover:bg-blue-600 hover:shadow-md text-sm"
-                      title="Reply to Feedback"
+                      className="px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-xs sm:text-sm flex items-center gap-1"
                     >
-                      <FaReply /> Reply
+                      <FaReply className="text-xs" /> Reply
                     </button>
                     <button
                       onClick={() => handleMarkResolved(item.id)}
-                      className={`px-4 py-2 rounded-lg font-semibold cursor-pointer flex items-center gap-2 transition-all duration-300 outline-none shadow-sm ${item.resolved ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600'} text-white hover:shadow-md text-sm`}
-                      title={item.resolved ? 'Mark as Unresolved' : 'Mark as Resolved'}
+                      className={`px-2 py-1 rounded-md text-xs sm:text-sm flex items-center gap-1 ${item.resolved ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600'} text-white`}
                     >
-                      {item.resolved ? <FaTimesCircle /> : <FaCheckCircle />}
+                      {item.resolved ? <FaTimesCircle className="text-xs" /> : <FaCheckCircle className="text-xs" />}
                       {item.resolved ? 'Unresolve' : 'Resolve'}
                     </button>
                     <button
                       onClick={() => handleDeleteFeedback(item.id)}
-                      className="px-4 py-2 rounded-lg font-semibold cursor-pointer flex items-center gap-2 transition-all duration-300 outline-none shadow-sm bg-red-500 text-white hover:bg-red-600 hover:shadow-md text-sm"
-                      title="Delete Feedback"
+                      className="px-2 py-1 bg-red-500 hover:bg-red-600 text-white rounded-md text-xs sm:text-sm flex items-center gap-1"
                     >
-                      <FaTrashAlt /> Delete
+                      <FaTrashAlt className="text-xs" /> Delete
                     </button>
                   </>
                 )}
@@ -626,7 +658,7 @@ const UserReviewSection = () => {
             </div>
           ))
         ) : (
-          <div className="lg:col-span-3 p-8 text-center text-gray-500 text-lg italic bg-gray-50 rounded-xl shadow-inner">
+          <div className="col-span-full p-4 sm:p-6 text-center text-gray-500 text-sm sm:text-base italic bg-gray-50 rounded-lg sm:rounded-xl shadow-inner">
             No feedback found matching your criteria.
           </div>
         )}

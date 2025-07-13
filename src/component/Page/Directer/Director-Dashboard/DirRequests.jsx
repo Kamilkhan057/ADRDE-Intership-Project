@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// Removed react-icons/fa import as it's causing resolution issues.
-// Icons will now be rendered using inline SVG for better compatibility in this environment.
 
-// Inline SVG for common icons
 const Icon = ({ name, className = "w-5 h-5", color = "currentColor" }) => {
   let path = "";
   switch (name) {
@@ -10,11 +7,10 @@ const Icon = ({ name, className = "w-5 h-5", color = "currentColor" }) => {
       path = "M11.742 10.344a6.5 6.5 0 10-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 001.415-1.414l-3.85-3.85a1.007 1.007 0 00-.115-.1zM12 6.5a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z";
       break;
     case "FaFilter":
-      // Corrected and more robust SVG path for a standard filter icon (funnel shape)
       path = "M14 12v7.88c.04.3-.02.61-.23.83a1.002 1.002 0 01-1.41.2L9.4 18.9a1 1 0 01-.23-.83V12h-.03L4.21 4.79A1 1 0 015 3h14a1 1 0 01.79 1.79L14 12z";
       break;
     case "FaDownload":
-      path = "M13 10V3L4 14h7v7l9-11h-7z"; // A simple download icon
+      path = "M13 10V3L4 14h7v7l9-11h-7z";
       break;
     case "FaEdit":
       path = "M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z";
@@ -23,7 +19,6 @@ const Icon = ({ name, className = "w-5 h-5", color = "currentColor" }) => {
       path = "M9 12.7L4.3 8 3 9.3l6 6L21 4 19.7 2.7z";
       break;
     case "FaTimes":
-      // Re-verified and ensured this path is correct for a standard 'X' icon
       path = "M18 6L6 18M6 6l12 12";
       break;
     case "FaInfoCircle":
@@ -51,7 +46,7 @@ const Icon = ({ name, className = "w-5 h-5", color = "currentColor" }) => {
       path = "M5 17l6-6 6 6h-4v6h-4v-6H5z";
       break;
     case "FaSpinner":
-      path = "M12 4V2A10 10 0 002 12h2a8 8 0 018-8z"; // Simple spinning circle
+      path = "M12 4V2A10 10 0 002 12h2a8 8 0 018-8z";
       break;
     case "FaUsers":
       path = "M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-4 0c1.66 0 2.99-1.34 2.99-3S13.66 5 12 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-4 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm8 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z";
@@ -60,7 +55,7 @@ const Icon = ({ name, className = "w-5 h-5", color = "currentColor" }) => {
       path = "M7 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S4 3.34 4 5v6c0 1.66 1.34 3 3 3zm10 0c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3s-3 1.34-3 3v6c0 1.66 1.34 3 3 3zM7 16c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm10 0c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4z";
       break;
     default:
-      path = ""; // Fallback for unknown icons
+      path = "";
   }
 
   return (
@@ -69,7 +64,6 @@ const Icon = ({ name, className = "w-5 h-5", color = "currentColor" }) => {
     </svg>
   );
 };
-
 
 const DirectorRequests = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -80,10 +74,9 @@ const DirectorRequests = () => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'ascending' });
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedType, setSelectedType] = useState('all'); // New state for filter by type
-  const [startDateFilter, setStartDateFilter] = useState(''); // New state for start date filter
-  const [endDateFilter, setEndDateFilter] = useState(''); // New state for end date filter
-
+  const [selectedType, setSelectedType] = useState('all');
+  const [startDateFilter, setStartDateFilter] = useState('');
+  const [endDateFilter, setEndDateFilter] = useState('');
 
   const dummyRequests = [
     {
@@ -280,11 +273,45 @@ const DirectorRequests = () => {
     const matchesStartDate = startDateFilter ? requestDate >= new Date(startDateFilter) : true;
     const matchesEndDate = endDateFilter ? requestDate <= new Date(endDateFilter) : true;
 
-
     return matchesSearch && matchesStatus && matchesType && matchesStartDate && matchesEndDate;
   });
 
+  // Alert functions
+  const showExportAlert = () => {
+    alert('Export functionality would be implemented here. This would download all request data.');
+  };
+
+  const showApproveAlert = (request) => {
+    alert(`Approving request:\n\nPurpose: ${request.purpose}\nUser: ${request.user}\nVenue: ${request.venue}\nDate: ${request.date}`);
+  };
+
+  const showRejectAlert = (request) => {
+    alert(`Rejecting request:\n\nPurpose: ${request.purpose}\nUser: ${request.user}\nVenue: ${request.venue}\nDate: ${request.date}`);
+  };
+
+  const showNotesAlert = (request) => {
+    alert(`Editing notes for request:\n\nPurpose: ${request.purpose}\nCurrent notes: ${request.notes || 'None'}`);
+  };
+
+  const showDetailsAlert = (request) => {
+    alert(`Showing details for request:\n\nPurpose: ${request.purpose}\nUser: ${request.user}\nVenue: ${request.venue}\nDate: ${request.date}\nTime: ${request.time}\nStatus: ${request.status}\nNotes: ${request.notes || 'None'}`);
+  };
+
+  const showFiltersAlert = () => {
+    alert('Applying filters:\n' + 
+      `Status: ${selectedStatus}\n` +
+      `Type: ${selectedType}\n` +
+      `Date Range: ${startDateFilter || 'Any'} to ${endDateFilter || 'Any'}`);
+  };
+
   const handleStatusChange = (id, status) => {
+    const request = requests.find(r => r.id === id);
+    if (status.includes('Approved')) {
+      showApproveAlert(request);
+    } else {
+      showRejectAlert(request);
+    }
+    
     setIsLoading(true);
     setTimeout(() => {
       setRequests(reqs => reqs.map(r => r.id === id ? { ...r, status } : r));
@@ -293,9 +320,10 @@ const DirectorRequests = () => {
   };
 
   const handleEdit = (id) => {
+    const request = requests.find(r => r.id === id);
+    showNotesAlert(request);
     setEditingRequestId(id);
-    const req = requests.find(r => r.id === id);
-    setEditNotes(req?.notes || '');
+    setEditNotes(request?.notes || '');
   };
 
   const saveEdit = (id) => {
@@ -305,20 +333,8 @@ const DirectorRequests = () => {
       setEditingRequestId(null);
       setEditNotes('');
       setIsLoading(false);
+      alert('Notes saved successfully!');
     }, 300);
-  };
-
-  const statusBadge = (status) => {
-    const base = "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide capitalize";
-    switch (status) {
-      case 'Approved by Group Director':
-        return <span className={`${base} bg-green-100 text-green-800`}><Icon name="FaCheck" className="mr-1 text-sm" /> Approved</span>;
-      case 'Rejected by Group Director':
-        // The FaTimes icon is already correctly placed here.
-        return <span className={`${base} bg-red-100 text-red-800`}><Icon name="FaTimes" className="mr-1 text-sm" /> Rejected</span>;
-      default:
-        return <span className={`${base} bg-yellow-100 text-yellow-800`}><Icon name="FaClock" className="mr-1 text-sm" /> Pending</span>;
-    }
   };
 
   const requestSort = (key) => {
@@ -335,12 +351,21 @@ const DirectorRequests = () => {
   };
 
   const applyFilters = () => {
-    // Filters are applied directly via state changes in the JSX,
-    // but this function can be used to trigger a re-render or
-    // fetch data with new filters if it were a real API call.
+    showFiltersAlert();
     setIsFilterModalOpen(false);
   };
 
+  const statusBadge = (status) => {
+    const base = "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide capitalize";
+    switch (status) {
+      case 'Approved by Group Director':
+        return <span className={`${base} bg-green-100 text-green-800`}><Icon name="FaCheck" className="mr-1 text-sm" /> Approved</span>;
+      case 'Rejected by Group Director':
+        return <span className={`${base} bg-red-100 text-red-800`}><Icon name="FaTimes" className="mr-1 text-sm" /> Rejected</span>;
+      default:
+        return <span className={`${base} bg-yellow-100 text-yellow-800`}><Icon name="FaClock" className="mr-1 text-sm" /> Pending</span>;
+    }
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen p-4 sm:p-6 lg:p-8 font-sans">
@@ -348,16 +373,19 @@ const DirectorRequests = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 pb-4 border-b border-gray-200">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3 sm:mb-0 flex items-center">
-            <Icon name="FaClipboardList" className="inline-block mr-3 text-blue-600 w-6 h-6 sm:w-8 sm:h-8" /> {/* Adjusted icon size */}
+            <Icon name="FaClipboardList" className="inline-block mr-3 text-blue-600 w-6 h-6 sm:w-8 sm:h-8" />
             Director Booking Requests
           </h1>
           <div className="flex flex-wrap gap-3">
-            <button className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 sm:px-5 sm:py-2 rounded-lg text-sm sm:text-base font-medium transition duration-200 ease-in-out shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+            <button 
+              onClick={showExportAlert}
+              className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 sm:px-5 sm:py-2 rounded-lg text-sm sm:text-base font-medium transition duration-200 ease-in-out shadow-md hover:shadow-md transform hover:-translate-y-0.5"
+            >
               <Icon name="FaDownload" className="mr-2 w-4 h-4" /> Export Data
             </button>
             <button
               onClick={() => setIsFilterModalOpen(true)}
-              className="flex items-center bg-white border border-gray-300 px-4 py-2 sm:px-5 sm:py-2 rounded-lg text-sm sm:text-base font-medium text-gray-700 hover:bg-gray-50 transition duration-200 ease-in-out shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+              className="flex items-center bg-white border border-gray-300 px-4 py-2 sm:px-5 sm:py-2 rounded-lg text-sm sm:text-base font-medium text-gray-700 hover:bg-gray-50 transition duration-200 ease-in-out shadow-md hover:shadow-md transform hover:-translate-y-0.5"
             >
               <Icon name="FaFilter" className="mr-2 w-4 h-4" /> More Filters
             </button>
@@ -365,13 +393,13 @@ const DirectorRequests = () => {
         </div>
 
         {/* Search and Quick Filter & Sort */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6 items-center">
           <div className="relative md:col-span-2">
-            <Icon name="FaSearch" className="absolute top-1/2 left-4 -translate-y-1/2 text-gray-400 w-4 h-4" /> {/* Adjusted icon size */}
+            <Icon name="FaSearch" className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
               placeholder="Search by user, venue, purpose, or type..."
-              className="pl-10 pr-4 py-2 sm:py-3 border border-gray-300 rounded-xl w-full text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out shadow-sm"
+              className="pl-10 pr-4 py-2 sm:py-2 border border-gray-300 rounded-lg w-full text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out shadow-sm"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -379,7 +407,7 @@ const DirectorRequests = () => {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="border border-gray-300 rounded-xl px-4 py-2 sm:py-3 text-sm sm:text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out shadow-sm bg-white"
+            className="border border-gray-300 rounded-lg px-3 py-2 sm:py-2 text-sm sm:text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out shadow-sm bg-white"
           >
             <option value="all">All Statuses</option>
             <option value="pending">Pending</option>
@@ -389,7 +417,7 @@ const DirectorRequests = () => {
           <select
             value={sortConfig.key}
             onChange={(e) => requestSort(e.target.value)}
-            className="border border-gray-300 rounded-xl px-4 py-2 sm:py-3 text-sm sm:text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out shadow-sm bg-white"
+            className="border border-gray-300 rounded-lg px-3 py-2 sm:py-2 text-sm sm:text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ease-in-out shadow-sm bg-white"
           >
             <option value="date">Sort by Date</option>
             <option value="user">Sort by User</option>
@@ -401,41 +429,39 @@ const DirectorRequests = () => {
         {/* Loading Indicator */}
         {isLoading && (
           <div className="flex items-center justify-center py-8 text-blue-600">
-            <Icon name="FaSpinner" className="animate-spin w-6 h-6 sm:w-8 sm:h-8 mr-3" /> {/* Adjusted icon size */}
+            <Icon name="FaSpinner" className="animate-spin w-6 h-6 sm:w-8 sm:h-8 mr-3" />
             <p className="text-base sm:text-lg font-medium">Loading requests...</p>
           </div>
         )}
 
         {/* Requests List */}
         {!isLoading && filteredAndSortedRequests.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-md p-6 sm:p-8 text-center mt-10 border border-gray-200">
+          <div className="bg-white rounded-lg shadow-md p-6 sm:p-8 text-center mt-10 border border-gray-200">
             <p className="text-lg sm:text-xl text-gray-500 font-semibold">No requests found matching your criteria.</p>
             <p className="text-gray-400 mt-2 text-sm sm:text-base">Try adjusting your search or filters.</p>
           </div>
         ) : (
           !isLoading && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredAndSortedRequests.map(req => (
-                <div key={req.id} className="bg-white rounded-xl shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 ease-in-out p-6 border border-gray-200 group">
-                  <div className="flex justify-between items-start mb-4">
+                <div key={req.id} className="bg-white rounded-lg shadow-md hover:shadow-md transform hover:-translate-y-1 transition-all duration-300 ease-in-out p-4 sm:p-6 border border-gray-200 group">
+                  <div className="flex justify-between items-start mb-3">
                     <h3 className="text-lg sm:text-xl font-semibold text-gray-800 flex-grow pr-4">{req.purpose}</h3>
                     {statusBadge(req.status)}
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-gray-700 text-sm sm:text-base mb-4 border-b pb-4 border-gray-100">
-                    <p className="flex items-center"><Icon name="FaUser" className="mr-3 text-blue-500 w-4 h-4" /> <span className="font-medium">User:</span> {req.user}</p>
-                    <p className="flex items-center"><Icon name="FaBuilding" className="mr-3 text-green-500 w-4 h-4" /> <span className="font-medium">Venue:</span> {req.venue}</p>
-                    <p className="flex items-center"><Icon name="FaCalendarAlt" className="mr-3 text-purple-500 w-4 h-4" /> <span className="font-medium">Date:</span> {req.date}</p>
-                    <p className="flex items-center"><Icon name="FaClock" className="mr-3 text-orange-500 w-4 h-4" /> <span className="font-medium">Time:</span> {req.time}</p>
-                    {/* Added FaUsers icon for Capacity */}
-                    <p className="flex items-center"><Icon name="FaUsers" className="mr-3 text-red-500 w-4 h-4" /> <span className="font-medium">Capacity:</span> {req.capacity}</p>
-                    {/* Added FaTools icon for Resources */}
-                    <p className="flex items-center"><Icon name="FaTools" className="mr-3 text-cyan-600 w-4 h-4" /> <span className="font-medium">Resources:</span> {req.resources}</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4 text-gray-700 text-sm sm:text-base mb-3 border-b pb-3 border-gray-100">
+                    <p className="flex items-center"><Icon name="FaUser" className="mr-2 text-blue-500 w-4 h-4" /> <span className="font-medium">User:</span> {req.user}</p>
+                    <p className="flex items-center"><Icon name="FaBuilding" className="mr-2 text-green-500 w-4 h-4" /> <span className="font-medium">Venue:</span> {req.venue}</p>
+                    <p className="flex items-center"><Icon name="FaCalendarAlt" className="mr-2 text-purple-500 w-4 h-4" /> <span className="font-medium">Date:</span> {req.date}</p>
+                    <p className="flex items-center"><Icon name="FaClock" className="mr-2 text-orange-500 w-4 h-4" /> <span className="font-medium">Time:</span> {req.time}</p>
+                    <p className="flex items-center"><Icon name="FaUsers" className="mr-2 text-red-500 w-4 h-4" /> <span className="font-medium">Capacity:</span> {req.capacity}</p>
+                    <p className="flex items-center"><Icon name="FaTools" className="mr-2 text-cyan-600 w-4 h-4" /> <span className="font-medium">Resources:</span> {req.resources}</p>
                   </div>
 
                   {editingRequestId === req.id ? (
-                    <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 animate-fadeIn">
-                      <label htmlFor={`notes-${req.id}`} className="block text-sm font-medium text-gray-700 mb-2">Edit Notes:</label>
+                    <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200 animate-fadeIn">
+                      <label htmlFor={`notes-${req.id}`} className="block text-sm font-medium text-gray-700 mb-1">Edit Notes:</label>
                       <textarea
                         id={`notes-${req.id}`}
                         value={editNotes}
@@ -444,16 +470,16 @@ const DirectorRequests = () => {
                         placeholder="Add or edit notes here..."
                         rows="3"
                       ></textarea>
-                      <div className="flex justify-end mt-3 space-x-2">
+                      <div className="flex justify-end mt-2 space-x-2">
                         <button
                           onClick={() => setEditingRequestId(null)}
-                          className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition duration-200 ease-in-out"
+                          className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-3 py-1 sm:px-4 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition duration-200 ease-in-out"
                         >
                           Cancel
                         </button>
                         <button
                           onClick={() => saveEdit(req.id)}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition duration-200 ease-in-out"
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 sm:px-4 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition duration-200 ease-in-out"
                         >
                           Save Notes
                         </button>
@@ -461,41 +487,60 @@ const DirectorRequests = () => {
                     </div>
                   ) : (
                     req.notes && (
-                      <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200 animate-fadeIn">
+                      <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200 animate-fadeIn">
                         <p className="text-sm text-blue-800 font-medium">Notes:</p>
                         <p className="text-sm text-blue-700 mt-1">{req.notes}</p>
                       </div>
                     )
                   )}
 
-                  <div className="flex flex-wrap gap-3 mt-5 justify-end">
+                  <div className="flex flex-wrap gap-2 mt-4 justify-end">
                     <button
-                      onClick={() => handleStatusChange(req.id, 'Approved by Group Director')}
-                      className="flex items-center bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition duration-200 ease-in-out shadow-sm hover:shadow-md"
+                      onClick={() => {
+                        const request = filteredAndSortedRequests.find(r => r.id === req.id);
+                        showApproveAlert(request);
+                        handleStatusChange(req.id, 'Approved by Group Director');
+                      }}
+                      className="flex items-center bg-green-500 hover:bg-green-600 text-white px-3 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition duration-200 ease-in-out shadow-sm hover:shadow-sm"
                       disabled={isLoading}
                     >
-                      <Icon name="FaCheck" className="mr-2 w-4 h-4" /> Approve
+                      <Icon name="FaCheck" className="mr-1 w-3 h-3 sm:w-4 sm:h-4" /> Approve
+                    </button>
+                   <button
+  onClick={() => handleStatusChange(req.id, 'Rejected by Group Director')}
+  className="flex items-center bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition duration-200 ease-in-out shadow-sm hover:shadow-md"
+  disabled={isLoading}
+>
+  {/* Solution 1: Add stroke-current */}
+  <Icon name="FaTimes" className="mr-2 w-4 h-4 text-white stroke-current" />
+  
+  {/* OR Solution 2: Force SVG display */}
+  <span className="inline-flex items-center">
+    <Icon name="FaTimes" className="mr-2 w-4 h-4 text-white" style={{ display: 'inline-block' }} />
+    Reject
+  </span>
+</button>
+                    <button
+                      onClick={() => {
+                        const request = filteredAndSortedRequests.find(r => r.id === req.id);
+                        showNotesAlert(request);
+                        handleEdit(req.id);
+                      }}
+                      className="flex items-center bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition duration-200 ease-in-out shadow-sm hover:shadow-sm"
+                      disabled={isLoading}
+                    >
+                      <Icon name="FaEdit" className="mr-1 w-3 h-3 sm:w-4 sm:h-4" /> Notes
                     </button>
                     <button
-                      onClick={() => handleStatusChange(req.id, 'Rejected by Group Director')}
-                      className="flex items-center bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition duration-200 ease-in-out shadow-sm hover:shadow-md"
+                      onClick={() => {
+                        const request = filteredAndSortedRequests.find(r => r.id === req.id);
+                        showDetailsAlert(request);
+                        setRequestDetails(req);
+                      }}
+                      className="flex items-center bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs sm:text-sm font-medium transition duration-200 ease-in-out shadow-sm hover:shadow-sm"
                       disabled={isLoading}
                     >
-                      <Icon name="FaTimes" className="mr-2 w-4 h-4" /> Reject
-                    </button>
-                    <button
-                      onClick={() => handleEdit(req.id)}
-                      className="flex items-center bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition duration-200 ease-in-out shadow-sm hover:shadow-md"
-                      disabled={isLoading}
-                    >
-                      <Icon name="FaEdit" className="mr-2 w-4 h-4" /> Notes
-                    </button>
-                    <button
-                      onClick={() => setRequestDetails(req)}
-                      className="flex items-center bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition duration-200 ease-in-out shadow-sm hover:shadow-md"
-                      disabled={isLoading}
-                    >
-                      <Icon name="FaInfoCircle" className="mr-2 w-4 h-4" /> View Details
+                      <Icon name="FaInfoCircle" className="mr-1 w-3 h-3 sm:w-4 sm:h-4" /> Details
                     </button>
                   </div>
                 </div>
@@ -507,11 +552,11 @@ const DirectorRequests = () => {
         {/* Request Details Modal */}
         {requestDetails && (
           <div className="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-50 p-4 sm:p-6 animate-fadeIn">
-            <div className="bg-white rounded-xl shadow-2xl p-6 sm:p-8 w-full max-w-lg transform transition-all duration-300 ease-out scale-95 opacity-0 animate-scaleIn">
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-5 border-b pb-3 flex items-center">
-                <Icon name="FaInfoCircle" className="mr-3 text-indigo-600 w-6 h-6 sm:w-8 sm:h-8" /> Request Details {/* Adjusted icon size */}
+            <div className="bg-white rounded-lg shadow-xl p-4 sm:p-6 w-full max-w-md sm:max-w-lg transform transition-all duration-300 ease-out scale-95 opacity-0 animate-scaleIn">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 border-b pb-3 flex items-center">
+                <Icon name="FaInfoCircle" className="mr-3 text-indigo-600 w-6 h-6 sm:w-8 sm:h-8" /> Request Details
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 text-sm sm:text-base text-gray-700">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4 text-sm sm:text-base text-gray-700">
                 <p><strong className="text-gray-800">User:</strong> {requestDetails.user}</p>
                 <p><strong className="text-gray-800">Type:</strong> {requestDetails.type}</p>
                 <p><strong className="text-gray-800">Venue:</strong> {requestDetails.venue}</p>
@@ -525,10 +570,10 @@ const DirectorRequests = () => {
                   <p><strong className="text-gray-800">Notes:</strong> {requestDetails.notes || 'None'}</p>
                 </div>
               </div>
-              <div className="mt-6 text-right">
+              <div className="mt-5 text-right">
                 <button
                   onClick={() => setRequestDetails(null)}
-                  className="bg-gray-700 hover:bg-gray-800 text-white px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition duration-200 ease-in-out shadow-md"
+                  className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition duration-200 ease-in-out shadow-sm"
                 >
                   Close
                 </button>
@@ -537,21 +582,21 @@ const DirectorRequests = () => {
           </div>
         )}
 
-        {/* Filter Modal (New) */}
+        {/* Filter Modal */}
         {isFilterModalOpen && (
           <div className="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-50 p-4 sm:p-6 animate-fadeIn">
-            <div className="bg-white rounded-xl shadow-2xl p-6 sm:p-8 w-full max-w-md transform transition-all duration-300 ease-out scale-95 opacity-0 animate-scaleIn">
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-5 border-b pb-3 flex items-center">
-                <Icon name="FaFilter" className="mr-3 text-blue-600 w-6 h-6 sm:w-8 sm:h-8" /> Advanced Filters {/* Adjusted icon size */}
+            <div className="bg-white rounded-lg shadow-xl p-4 sm:p-6 w-full max-w-md transform transition-all duration-300 ease-out scale-95 opacity-0 animate-scaleIn">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 border-b pb-3 flex items-center">
+                <Icon name="FaFilter" className="mr-3 text-blue-600 w-6 h-6 sm:w-8 sm:h-8" /> Advanced Filters
               </h3>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div>
-                  <label htmlFor="status-filter-modal" className="block text-sm font-medium text-gray-700 mb-2">Filter by Status:</label>
+                  <label htmlFor="status-filter-modal" className="block text-sm font-medium text-gray-700 mb-1">Filter by Status:</label>
                   <select
                     id="status-filter-modal"
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-4 py-2 text-sm sm:text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm sm:text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                   >
                     <option value="all">All Statuses</option>
                     <option value="pending">Pending</option>
@@ -560,12 +605,12 @@ const DirectorRequests = () => {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="request-type-filter" className="block text-sm font-medium text-gray-700 mb-2">Filter by Type:</label>
+                  <label htmlFor="request-type-filter" className="block text-sm font-medium text-gray-700 mb-1">Filter by Type:</label>
                   <select
                     id="request-type-filter"
                     value={selectedType}
                     onChange={(e) => setSelectedType(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-4 py-2 text-sm sm:text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm sm:text-base w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                   >
                     <option value="all">All Types</option>
                     <option value="seminar">Seminar</option>
@@ -579,33 +624,33 @@ const DirectorRequests = () => {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="start-date" className="block text-sm font-medium text-gray-700 mb-2">Date Range:</label>
+                  <label htmlFor="start-date" className="block text-sm font-medium text-gray-700 mb-1">Date Range:</label>
                   <input
                     type="date"
                     id="start-date"
                     value={startDateFilter}
                     onChange={(e) => setStartDateFilter(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-4 py-2 text-sm sm:text-base w-full text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm sm:text-base w-full text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   <input
                     type="date"
                     id="end-date"
                     value={endDateFilter}
                     onChange={(e) => setEndDateFilter(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-4 py-2 text-sm sm:text-base w-full mt-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm sm:text-base w-full mt-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
               </div>
-              <div className="mt-6 flex justify-end space-x-3">
+              <div className="mt-5 flex justify-end space-x-3">
                 <button
                   onClick={() => setIsFilterModalOpen(false)}
-                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition duration-200 ease-in-out"
+                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition duration-200 ease-in-out"
                 >
                   Close
                 </button>
                 <button
                   onClick={applyFilters}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition duration-200 ease-in-out shadow-md"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm sm:text-base font-medium transition duration-200 ease-in-out shadow-sm"
                 >
                   Apply Filters
                 </button>
