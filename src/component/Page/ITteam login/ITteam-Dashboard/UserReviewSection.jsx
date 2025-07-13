@@ -664,8 +664,6 @@ const UserReviewSection = () => {
         )}
       </div>
 
-      {/* helllo */}
-
       {showConfirmModal && (
         <ConfirmationModal
           onClose={() => setShowConfirmModal(false)}
